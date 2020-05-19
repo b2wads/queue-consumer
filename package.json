@@ -1,13 +1,14 @@
 {
-  "name": "nodejs-boilerplate",
+  "name": "queue-consumer",
   "version": "0.1.0",
-  "description": "Boilerplate para projetos NodeJS",
-  "main": "app.js",
+  "description": "Framework for creating consumers for message-broker systems",
+  "main": "index.js",
   "dependencies": {
     "@b2wads/logger": "1.0.3",
-    "express": "4.17.1"
+    "env-o-loader": "^1.0.7"
   },
   "devDependencies": {
+    "amqplib": "^0.5.6",
     "chai": "4.2.0",
     "eslint": "6.8.0",
     "eslint-config-airbnb": "18.1.0",
@@ -24,24 +25,22 @@
     "mocha": "7.1.2",
     "nyc": "15.0.1",
     "prettier": "2.0.5",
-    "supertest": "4.0.2"
+    "q": "^1.5.1",
+    "sinon": "^9.0.2"
   },
   "scripts": {
     "deps": "docker-compose up --build --force-recreate",
     "eslint": "./node_modules/.bin/eslint --fix .",
     "eslint:check": "./node_modules/.bin/eslint .",
-    "fix:<fix-name>": "node scripts/fix-<fix-name>.js",
     "fmt": "npm run prettier && npm run eslint",
     "fmt:check": "npm run prettier:check && npm run eslint:check",
     "prettier": "./node_modules/.bin/prettier --write \"**/{*.js,*.json,bin/**}\"",
     "prettier:check": "./node_modules/.bin/prettier --check \"**/{*.js,*.json,bin/**}\"",
-    "start": "node ./bin/www",
-    "test": "./node_modules/.bin/nyc mocha --reporter spec",
-    "test:coverage-report": "nyc report --reporter=text-lcov > coverage.lcov",
-    "test:acceptance": "npm t test/acceptance/*",
-    "test:integration": "npm t test/integration/*",
-    "test:unit": "npm t test/unit/*",
-    "worker:<worker-name>": "node workers/<worker-name.js>"
+    "test": "NODE_PATH=. ./node_modules/.bin/nyc mocha --reporter spec",
+    "test:coverage-report": "NODE_PATH=. nyc report --reporter=text-lcov > coverage.lcov",
+    "test:acceptance": "NODE_PATH=. npm t test/acceptance/*",
+    "test:integration": "NODE_PATH=. npm t test/integration/*",
+    "test:unit": "NODE_PATH=. npm t test/unit/*"
   },
   "repository": {
     "type": "git",
@@ -50,7 +49,6 @@
   "keywords": [
     "nodejs",
     "boilerplate",
-    "webapp",
     "worker"
   ],
   "author": "B2WADS",

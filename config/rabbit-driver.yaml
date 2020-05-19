@@ -1,0 +1,20 @@
+defaults:
+  keepAlive: true
+  maxConnectionRetries: 3
+  retryDelay: 1000
+  extraPrefetchPercentage: 1.0
+  requeueOnFailure: true
+
+test:
+  keepAlive: env:TEST_RABBIT_DRIVER_KEEP_ALIVE
+  maxConnectionRetries: env:TEST_RABBIT_DRIVER_MAX_RETRIES
+  retryDelay: env:TEST_RABBIT_DRIVER_RETRY_DELAY
+  extraPrefetchPercentage: env:TEST_RABBIT_DRIVER_PREFETCH_FACTOR
+  requeueOnFailure: env:TEST_RABBIT_DRIVER_REQUEUE_ON_FAILURE
+
+production:
+  keepAlive: env:RABBIT_DRIVER_KEEP_ALIVE
+  maxConnectionRetries: env:RABBIT_DRIVER_MAX_RETRIES
+  retryDelay: env:RABBIT_DRIVER_RETRY_DELAY
+  extraPrefetchPercentage: env:RABBIT_DRIVER_PREFETCH_FACTOR
+  requeueOnFailure: env:RABBIT_DRIVER_REQUEUE_ON_FAILURE
