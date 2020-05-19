@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+
 const sinon = require('sinon')
 const fakePromise = require('q')
 
@@ -12,7 +14,7 @@ const newDriverStub = () => {
     disconnect: sinon.stub().returns(fakePromise()),
     notifyBatchFailure: sinon.stub().returns(fakePromise()),
     notifyBatchSuccess: sinon.stub().returns(fakePromise()),
-    notifySingleFailure: sinon.stub().returns(fakePromise())
+    notifySingleFailure: sinon.stub().returns(fakePromise()),
   }
 }
 
@@ -26,7 +28,7 @@ describe('[UNIT] Consumer', () => {
         try {
           consumer = new Consumer({
             driver: stubDriver,
-            asyncBatchOutput: () => {}
+            asyncBatchOutput: () => {},
           })
         } catch (err) {
           thrownError = err
@@ -54,7 +56,7 @@ describe('[UNIT] Consumer', () => {
         try {
           // eslint-disable-next-line no-unused-vars
           const consumer = new Consumer({
-            driver: stubDriver
+            driver: stubDriver,
           })
         } catch (err) {
           thrownError = err
@@ -66,9 +68,7 @@ describe('[UNIT] Consumer', () => {
       })
 
       it('should throw an error containing a descriptive message', () => {
-        expect(thrownError.message).to.match(
-          /missing.*(argument|parameter).*asyncBatchOutput/
-        )
+        expect(thrownError.message).to.match(/missing.*(argument|parameter).*asyncBatchOutput/)
       })
     })
 
@@ -78,7 +78,7 @@ describe('[UNIT] Consumer', () => {
         try {
           // eslint-disable-next-line no-unused-vars
           const consumer = new Consumer({
-            asyncBatchOutput: () => {}
+            asyncBatchOutput: () => {},
           })
         } catch (err) {
           thrownError = err
@@ -90,9 +90,7 @@ describe('[UNIT] Consumer', () => {
       })
 
       it('should throw an error containing a descriptive message', () => {
-        expect(thrownError.message).to.match(
-          /missing.*(argument|parameter).*driver/
-        )
+        expect(thrownError.message).to.match(/missing.*(argument|parameter).*driver/)
       })
     })
   })
@@ -101,20 +99,17 @@ describe('[UNIT] Consumer', () => {
     context('with number of messages smaller than batch size', () => {
       const stubDriver = newDriverStub()
       const batchOutputFixture = sinon.stub().returns(fakePromise())
-      const messageAdapterFixture = sinon.stub().callsFake(async msg => msg)
+      const messageAdapterFixture = sinon.stub().callsFake(async (msg) => msg)
       const maxFlushDelay = 500
-      const fakeMsgs = [
-        { msg: 'this is message 1' },
-        { msg: 'this is message 2' }
-      ]
+      const fakeMsgs = [{ msg: 'this is message 1' }, { msg: 'this is message 2' }]
 
-      const fakeRawMsgs = fakeMsgs.map(msg => {
+      const fakeRawMsgs = fakeMsgs.map((msg) => {
         return { content: Buffer.from(JSON.stringify(msg)) }
       })
 
-      const fakeMsgsStatus = fakeMsgs.map(msg => ({
+      const fakeMsgsStatus = fakeMsgs.map((msg) => ({
         status: messageStatus.SUCCESS,
-        parsedMsg: msg
+        parsedMsg: msg,
       }))
 
       let flushSpy
@@ -125,7 +120,7 @@ describe('[UNIT] Consumer', () => {
           asyncMessageAdapter: messageAdapterFixture,
           batchSize: 5,
           driver: stubDriver,
-          maxFlushDelay
+          maxFlushDelay,
         })
 
         flushSpy = sinon.spy(Consumer.prototype, '_flushBatch')
@@ -157,13 +152,11 @@ describe('[UNIT] Consumer', () => {
       })
 
       it('should call message adapter the correct number of times', () => {
-        expect(messageAdapterFixture.getCalls()).to.have.lengthOf(
-          fakeMsgs.length
-        )
+        expect(messageAdapterFixture.getCalls()).to.have.lengthOf(fakeMsgs.length)
       })
 
       it('should call message adapter passing messages as arguments', () => {
-        fakeMsgs.forEach(msg => {
+        fakeMsgs.forEach((msg) => {
           expect(messageAdapterFixture.calledWith(msg)).to.be.true
         })
       })
@@ -173,25 +166,23 @@ describe('[UNIT] Consumer', () => {
       })
 
       it('should pass entire batch to batch handler', () => {
-        fakeMsgs.forEach(msg => {
+        fakeMsgs.forEach((msg) => {
           expect(batchOutputFixture.calledWith([msg])).to.be.true
         })
       })
 
       it('should notify success to driver for each batch', () => {
-        expect(stubDriver.notifyBatchSuccess.getCalls()).to.have.lengthOf(
-          fakeRawMsgs.length
-        )
+        expect(stubDriver.notifyBatchSuccess.getCalls()).to.have.lengthOf(fakeRawMsgs.length)
       })
 
       it('should notify driver with messages status', () => {
         const calls = stubDriver.notifyBatchSuccess.getCalls()
         expect(calls).to.have.lengthOf(fakeMsgsStatus.length)
-        calls.forEach(call => {
+        calls.forEach((call) => {
           const [[notifiedStatus]] = call.args
           const parsedStatus = {
             status: notifiedStatus.status,
-            parsedMsg: JSON.parse(notifiedStatus.rawMsg.content.toString())
+            parsedMsg: JSON.parse(notifiedStatus.rawMsg.content.toString()),
           }
           expect(fakeMsgsStatus).to.deep.include(parsedStatus)
         })
@@ -202,20 +193,16 @@ describe('[UNIT] Consumer', () => {
       const stubDriver = newDriverStub()
       const batchOutputFixture = sinon.stub().returns(fakePromise())
       const maxFlushDelay = 100000
-      const messageAdapterFixture = sinon.stub().callsFake(async msg => msg)
-      const fakeMsgs = [
-        { msg: 'this is message 1' },
-        { msg: 'this is message 2' },
-        { msg: 'this is message 3' }
-      ]
+      const messageAdapterFixture = sinon.stub().callsFake(async (msg) => msg)
+      const fakeMsgs = [{ msg: 'this is message 1' }, { msg: 'this is message 2' }, { msg: 'this is message 3' }]
 
-      const fakeRawMsgs = fakeMsgs.map(fakeMsg => {
+      const fakeRawMsgs = fakeMsgs.map((fakeMsg) => {
         return { content: Buffer.from(JSON.stringify(fakeMsg)) }
       })
 
-      const fakeMsgsStatus = fakeMsgs.map(msg => ({
+      const fakeMsgsStatus = fakeMsgs.map((msg) => ({
         status: messageStatus.SUCCESS,
-        parsedMsg: msg
+        parsedMsg: msg,
       }))
 
       let flushSpy
@@ -226,16 +213,14 @@ describe('[UNIT] Consumer', () => {
           asyncBatchOutput: batchOutputFixture,
           asyncMessageAdapter: messageAdapterFixture,
           batchSize: fakeMsgs.length,
-          maxFlushDelay
+          maxFlushDelay,
         })
 
         flushSpy = sinon.spy(Consumer.prototype, '_flushBatch')
 
         await consumer.start()
 
-        await Promise.all(
-          fakeRawMsgs.map(msg => consumer.consumerCallback(msg))
-        )
+        await Promise.all(fakeRawMsgs.map((msg) => consumer.consumerCallback(msg)))
       })
 
       after(async () => {
@@ -252,13 +237,11 @@ describe('[UNIT] Consumer', () => {
       })
 
       it('should call message adapter the correct number of times', () => {
-        expect(messageAdapterFixture.getCalls()).to.have.lengthOf(
-          fakeMsgs.length
-        )
+        expect(messageAdapterFixture.getCalls()).to.have.lengthOf(fakeMsgs.length)
       })
 
       it('should call message adapter passing messages as arguments', () => {
-        fakeMsgs.forEach(msg => {
+        fakeMsgs.forEach((msg) => {
           expect(messageAdapterFixture.calledWith(msg)).to.be.true
         })
       })
@@ -279,9 +262,9 @@ describe('[UNIT] Consumer', () => {
         const calls = stubDriver.notifyBatchSuccess.getCalls()
         expect(calls).to.have.lengthOf(1)
         const [notifiedStatuses] = calls[0].args
-        const parsedStatuses = notifiedStatuses.map(notifiedStatus => ({
+        const parsedStatuses = notifiedStatuses.map((notifiedStatus) => ({
           status: notifiedStatus.status,
-          parsedMsg: JSON.parse(notifiedStatus.rawMsg.content.toString())
+          parsedMsg: JSON.parse(notifiedStatus.rawMsg.content.toString()),
         }))
         expect(parsedStatuses).to.have.deep.members(fakeMsgsStatus)
       })
@@ -289,133 +272,43 @@ describe('[UNIT] Consumer', () => {
   })
 
   describe('when invalidating messages due to untreated errors', () => {
-    context(
-      'when message adapter raises an error and consumer is configured to not discard on adapter failure',
-      () => {
-        const stubDriver = newDriverStub()
-        const fakeMsgs = [
-          { id: 1, valid: true },
-          {
-            id: 2,
-            valid: false,
-            invalid_message: 'forced test error: message 2 is invalid'
-          },
-          { id: 3, valid: true },
-          {
-            id: 4,
-            valid: false,
-            invalid_message: 'forced test error: message 4 is invalid'
-          }
-        ]
-        const fakeRawMsgs = fakeMsgs.map(msg => {
-          return { content: Buffer.from(JSON.stringify(msg)) }
-        })
-
-        const fakeMsgsStatus = fakeMsgs.map(msg => {
-          if (msg.valid)
-            return {
-              status: messageStatus.SUCCESS,
-              parsedMsg: msg
-            }
-          return {
-            status: messageStatus.FAILED,
-            parsedMsg: msg
-          }
-        })
-
-        const messageAdapterFixture = sinon.stub().callsFake(async msg => {
-          if (!msg.valid) throw new Error(msg.invalid_message)
-        })
-
-        const batchOutputFixture = sinon.stub().returns(fakePromise())
-
-        let loggerStub
-        let consumer
-        before(async () => {
-          consumer = new Consumer({
-            driver: stubDriver,
-            asyncBatchOutput: batchOutputFixture,
-            discardOnAdapterFailure: false,
-            asyncMessageAdapter: messageAdapterFixture,
-            batchSize: fakeMsgs.length
-          })
-
-          loggerStub = sinon.stub(logger, 'error')
-
-          await consumer.start()
-
-          await Promise.all(
-            fakeRawMsgs.map(msg => consumer.consumerCallback(msg))
-          )
-        })
-
-        after(async () => {
-          await consumer.stop()
-          loggerStub.restore()
-        })
-
-        it('should notify driver with messages status', () => {
-          const calls = stubDriver.notifyBatchSuccess.getCalls()
-          expect(calls).to.have.lengthOf(1)
-          const [notifiedStatuses] = calls[0].args
-          const parsedStatuses = notifiedStatuses.map(notifiedStatus => ({
-            status: notifiedStatus.status,
-            parsedMsg: JSON.parse(notifiedStatus.rawMsg.content.toString())
-          }))
-          expect(parsedStatuses).to.have.deep.members(fakeMsgsStatus)
-        })
-
-        it('should log errors', () => {
-          expect(loggerStub.called).to.be.true
-        })
-
-        it('should properly log error message and stack', () => {
-          loggerStub.getCalls().forEach(call => {
-            const [message] = call.args
-            expect(message).to.include.keys('error', 'stack')
-          })
-        })
-      }
-    )
-
-    context('when batch handler raises an error', () => {
+    context('when message adapter raises an error and consumer is configured to not discard on adapter failure', () => {
       const stubDriver = newDriverStub()
       const fakeMsgs = [
         { id: 1, valid: true },
         {
           id: 2,
           valid: false,
-          invalid_message: 'forced test error: message 2 is invalid'
+          invalid_message: 'forced test error: message 2 is invalid',
         },
         { id: 3, valid: true },
         {
           id: 4,
           valid: false,
-          invalid_message: 'forced test error: message 4 is invalid'
-        }
+          invalid_message: 'forced test error: message 4 is invalid',
+        },
       ]
-      const fakeRawMsgs = fakeMsgs.map(msg => {
+      const fakeRawMsgs = fakeMsgs.map((msg) => {
         return { content: Buffer.from(JSON.stringify(msg)) }
       })
 
-      const fakeMsgsStatus = fakeMsgs.map(msg => {
+      const fakeMsgsStatus = fakeMsgs.map((msg) => {
         if (msg.valid)
           return {
             status: messageStatus.SUCCESS,
-            parsedMsg: msg
+            parsedMsg: msg,
           }
         return {
           status: messageStatus.FAILED,
-          parsedMsg: msg
+          parsedMsg: msg,
         }
       })
 
-      const messageAdapterFixture = sinon.stub().callsFake(async msg => {
+      const messageAdapterFixture = sinon.stub().callsFake(async (msg) => {
         if (!msg.valid) throw new Error(msg.invalid_message)
       })
-      const batchOutputFixture = sinon
-        .stub()
-        .throws('batch error', 'forced test error: batch error')
+
+      const batchOutputFixture = sinon.stub().returns(fakePromise())
 
       let loggerStub
       let consumer
@@ -425,15 +318,96 @@ describe('[UNIT] Consumer', () => {
           asyncBatchOutput: batchOutputFixture,
           discardOnAdapterFailure: false,
           asyncMessageAdapter: messageAdapterFixture,
-          batchSize: fakeMsgs.length
+          batchSize: fakeMsgs.length,
+        })
+
+        loggerStub = sinon.stub(logger, 'error')
+
+        await consumer.start()
+
+        await Promise.all(fakeRawMsgs.map((msg) => consumer.consumerCallback(msg)))
+      })
+
+      after(async () => {
+        await consumer.stop()
+        loggerStub.restore()
+      })
+
+      it('should notify driver with messages status', () => {
+        const calls = stubDriver.notifyBatchSuccess.getCalls()
+        expect(calls).to.have.lengthOf(1)
+        const [notifiedStatuses] = calls[0].args
+        const parsedStatuses = notifiedStatuses.map((notifiedStatus) => ({
+          status: notifiedStatus.status,
+          parsedMsg: JSON.parse(notifiedStatus.rawMsg.content.toString()),
+        }))
+        expect(parsedStatuses).to.have.deep.members(fakeMsgsStatus)
+      })
+
+      it('should log errors', () => {
+        expect(loggerStub.called).to.be.true
+      })
+
+      it('should properly log error message and stack', () => {
+        loggerStub.getCalls().forEach((call) => {
+          const [message] = call.args
+          expect(message).to.include.keys('error', 'stack')
+        })
+      })
+    })
+
+    context('when batch handler raises an error', () => {
+      const stubDriver = newDriverStub()
+      const fakeMsgs = [
+        { id: 1, valid: true },
+        {
+          id: 2,
+          valid: false,
+          invalid_message: 'forced test error: message 2 is invalid',
+        },
+        { id: 3, valid: true },
+        {
+          id: 4,
+          valid: false,
+          invalid_message: 'forced test error: message 4 is invalid',
+        },
+      ]
+      const fakeRawMsgs = fakeMsgs.map((msg) => {
+        return { content: Buffer.from(JSON.stringify(msg)) }
+      })
+
+      const fakeMsgsStatus = fakeMsgs.map((msg) => {
+        if (msg.valid)
+          return {
+            status: messageStatus.SUCCESS,
+            parsedMsg: msg,
+          }
+        return {
+          status: messageStatus.FAILED,
+          parsedMsg: msg,
+        }
+      })
+
+      const messageAdapterFixture = sinon.stub().callsFake(async (msg) => {
+        if (!msg.valid) throw new Error(msg.invalid_message)
+      })
+      const batchOutputFixture = sinon.stub().throws('batch error', 'forced test error: batch error')
+
+      let loggerStub
+      let consumer
+      before(async () => {
+        consumer = new Consumer({
+          driver: stubDriver,
+          asyncBatchOutput: batchOutputFixture,
+          discardOnAdapterFailure: false,
+          asyncMessageAdapter: messageAdapterFixture,
+          batchSize: fakeMsgs.length,
         })
 
         loggerStub = sinon.stub(logger, 'error')
         await consumer.start()
 
-        await Promise.all(
-          fakeRawMsgs.map(msg => consumer.consumerCallback(msg))
-        )
+        await Promise.all(fakeRawMsgs.map((msg) => consumer.consumerCallback(msg)))
       })
 
       after(async () => {
@@ -449,9 +423,9 @@ describe('[UNIT] Consumer', () => {
         const calls = stubDriver.notifyBatchFailure.getCalls()
         expect(calls).to.have.lengthOf(1)
         const [notifiedStatuses] = calls[0].args
-        const parsedStatuses = notifiedStatuses.map(notifiedStatus => ({
+        const parsedStatuses = notifiedStatuses.map((notifiedStatus) => ({
           status: notifiedStatus.status,
-          parsedMsg: JSON.parse(notifiedStatus.rawMsg.content.toString())
+          parsedMsg: JSON.parse(notifiedStatus.rawMsg.content.toString()),
         }))
         expect(parsedStatuses).to.have.deep.members(fakeMsgsStatus)
       })
@@ -465,7 +439,7 @@ describe('[UNIT] Consumer', () => {
       })
 
       it('should properly log error message and stack', () => {
-        loggerStub.getCalls().forEach(call => {
+        loggerStub.getCalls().forEach((call) => {
           const [message] = call.args
           expect(message).to.include.keys('error', 'stack')
         })
@@ -485,7 +459,7 @@ describe('[UNIT] Consumer', () => {
           driver: stubDriver,
           asyncBatchOutput: batchOutputFixture,
           asyncMessageAdapter: messageAdapterFixture,
-          batchSize: 1
+          batchSize: 1,
         })
 
         sinon.spy(consumer, '_scheduleNextFlush')

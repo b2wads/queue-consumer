@@ -5,6 +5,5 @@ const messageStatus = require('./src/message-status-enum')
 module.exports = {
   Consumer,
   RabbitDriver,
-  messageStatus
+  messageStatus,
 }
-

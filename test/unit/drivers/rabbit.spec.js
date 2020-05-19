@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+
 const amqplib = require('amqplib')
 const sinon = require('sinon')
 const { performance } = require('perf_hooks')
@@ -15,7 +17,7 @@ describe('[UNIT] rabbit-driver', () => {
           // eslint-disable-next-line no-unused-vars
           const driver = new RabbitDriver({
             queue: 'doesnt-matter',
-            batchSize: 5
+            batchSize: 5,
           })
         } catch (err) {
           thrownError = err
@@ -38,7 +40,7 @@ describe('[UNIT] rabbit-driver', () => {
           // eslint-disable-next-line no-unused-vars
           const driver = new RabbitDriver({
             uri: 'amqp://doesnt-matter',
-            batchSize: 5
+            batchSize: 5,
           })
         } catch (err) {
           thrownError = err
@@ -61,7 +63,7 @@ describe('[UNIT] rabbit-driver', () => {
           // eslint-disable-next-line no-unused-vars
           const driver = new RabbitDriver({
             uri: 'amqp://doesnt-matter',
-            queue: 'doesnt-matter'
+            queue: 'doesnt-matter',
           })
         } catch (err) {
           thrownError = err
@@ -86,16 +88,14 @@ describe('[UNIT] rabbit-driver', () => {
         maxConnectionRetries: 5,
         retryDelay: 200,
         queue: 'queue-doesnt-matter',
-        batchSize: 10
+        batchSize: 10,
       }
 
       let thrownError
       const amqpSandbox = sinon.createSandbox()
       const loggerSandbox = sinon.createSandbox()
       before(async () => {
-        amqpSandbox
-          .stub(amqplib, 'connect')
-          .throws('connection error', 'error forced by test')
+        amqpSandbox.stub(amqplib, 'connect').throws('connection error', 'error forced by test')
 
         loggerSandbox.stub(logger, 'warn')
         loggerSandbox.stub(logger, 'error')
@@ -117,15 +117,11 @@ describe('[UNIT] rabbit-driver', () => {
       })
 
       it('should attempt to connect multiple times, following limit in the configuration', () => {
-        expect(amqplib.connect.getCalls()).to.have.lengthOf(
-          configFixture.maxConnectionRetries
-        )
+        expect(amqplib.connect.getCalls()).to.have.lengthOf(configFixture.maxConnectionRetries)
       })
 
       it('should wait between connection retries, following configured delay', () => {
-        expect(timeTaken).to.be.at.least(
-          configFixture.retryDelay * (configFixture.maxConnectionRetries - 1)
-        )
+        expect(timeTaken).to.be.at.least(configFixture.retryDelay * (configFixture.maxConnectionRetries - 1))
       })
 
       it('should throw error', () => {
@@ -133,15 +129,11 @@ describe('[UNIT] rabbit-driver', () => {
       })
 
       it('should throw an error indicating a connection error', () => {
-        expect(thrownError.message).to.match(
-          /(could not connect)|(connection failed)|(failed to connect)/
-        )
+        expect(thrownError.message).to.match(/(could not connect)|(connection failed)|(failed to connect)/)
       })
 
       it('should log warnings on every connection retry', () => {
-        expect(logger.warn.getCalls()).to.have.lengthOf(
-          configFixture.maxConnectionRetries
-        )
+        expect(logger.warn.getCalls()).to.have.lengthOf(configFixture.maxConnectionRetries)
       })
 
       it('should log error after too many failed attempts', () => {

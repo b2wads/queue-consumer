@@ -8,15 +8,15 @@ const defaultErrorHandler = async (error, messages) => {
     action: 'consumer.defaultErrorHandler',
     msg: 'messages could not be processed because an error occurred',
     ...errorParser(error),
-    messages
+    messages,
   })
 }
 
-const defaultMessageToObject = rawMsg => {
+const defaultMessageToObject = (rawMsg) => {
   return JSON.parse(rawMsg.content.toString())
 }
 
-const defaultMessageAdapter = async msg => msg
+const defaultMessageAdapter = async (msg) => msg
 
 class Consumer {
   constructor({
@@ -27,10 +27,9 @@ class Consumer {
     driver,
     errorHandler = defaultErrorHandler,
     maxFlushDelay = 10000,
-    messageToObject = defaultMessageToObject
+    messageToObject = defaultMessageToObject,
   }) {
-    if (!asyncBatchOutput)
-      throw Error("missing required parameter 'asyncBatchOutput'")
+    if (!asyncBatchOutput) throw Error("missing required parameter 'asyncBatchOutput'")
     if (!driver) throw Error("missing required parameter 'driver'")
 
     this.asyncMessageAdapter = asyncMessageAdapter
@@ -45,7 +44,7 @@ class Consumer {
     this._batch = []
     this._processingBatch = false
 
-    this.consumerCallback = async rawMsg => {
+    this.consumerCallback = async (rawMsg) => {
       this._batch.push(rawMsg)
       if (this._batch.length >= this.batchSize) {
         await this._flushBatch()
@@ -54,10 +53,7 @@ class Consumer {
   }
 
   _scheduleNextFlush() {
-    this._flushTimeout = setTimeout(
-      this._flushBatch.bind(this),
-      this.maxFlushDelay
-    )
+    this._flushTimeout = setTimeout(this._flushBatch.bind(this), this.maxFlushDelay)
   }
 
   _unscheduleNextFlush() {
@@ -87,7 +83,7 @@ class Consumer {
   async _adaptAll(batchUnderProcess) {
     const adaptedMsgs = []
 
-    const messagesStatus = await asyncMap(batchUnderProcess, async rawMsg => {
+    const messagesStatus = await asyncMap(batchUnderProcess, async (rawMsg) => {
       let msg
 
       try {
@@ -102,12 +98,12 @@ class Consumer {
               action: 'consumer._flushBatch',
               msg: 'message invalidated by message adapter',
               reason: err.message || err.text,
-              message: msg
+              message: msg,
             })
 
             return {
               status: MessageStatus.DISCARDED,
-              rawMsg
+              rawMsg,
             }
           }
 
@@ -118,13 +114,13 @@ class Consumer {
 
         return {
           status: MessageStatus.SUCCESS,
-          rawMsg
+          rawMsg,
         }
       } catch (err) {
         this.errorHandler(err, [msg])
         return {
           status: MessageStatus.FAILED,
-          rawMsg
+          rawMsg,
         }
       }
     })

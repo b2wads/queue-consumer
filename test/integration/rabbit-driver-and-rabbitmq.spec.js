@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+
 const amqplib = require('amqplib')
 
 const { RabbitDriver } = require('index')
@@ -32,7 +34,7 @@ describe('[INTEGRATION] rabbit-driver and RabbitMQ', () => {
         uri: rabbitUri,
         queue: queueFixture,
         batchSize: 1,
-        retryDelay: 100
+        retryDelay: 100,
       }
       const messageFixture = 'this is a message'
 
@@ -42,7 +44,7 @@ describe('[INTEGRATION] rabbit-driver and RabbitMQ', () => {
       before(async () => {
         driver = new RabbitDriver(configFixture)
 
-        await driver.connect(rawMsg => {
+        await driver.connect((rawMsg) => {
           messages.push(rawMsg.content.toString())
         })
 
@@ -57,10 +59,7 @@ describe('[INTEGRATION] rabbit-driver and RabbitMQ', () => {
           reconnected = false
         }
 
-        await rabbit.channel.sendToQueue(
-          queueFixture,
-          Buffer.from(messageFixture)
-        )
+        await rabbit.channel.sendToQueue(queueFixture, Buffer.from(messageFixture))
         await wait(500)
       })
 
@@ -85,7 +84,7 @@ describe('[INTEGRATION] rabbit-driver and RabbitMQ', () => {
         uri: rabbitUri,
         queue: queueFixture,
         batchSize: 1,
-        retryDelay: 100
+        retryDelay: 100,
       }
       const messageFixture = 'this is a message'
 
@@ -95,7 +94,7 @@ describe('[INTEGRATION] rabbit-driver and RabbitMQ', () => {
       before(async () => {
         driver = new RabbitDriver(configFixture)
 
-        await driver.connect(rawMsg => {
+        await driver.connect((rawMsg) => {
           messages.push(rawMsg.content.toString())
         })
 
@@ -110,10 +109,7 @@ describe('[INTEGRATION] rabbit-driver and RabbitMQ', () => {
           reconnected = false
         }
 
-        await rabbit.channel.sendToQueue(
-          queueFixture,
-          Buffer.from(messageFixture)
-        )
+        await rabbit.channel.sendToQueue(queueFixture, Buffer.from(messageFixture))
         await wait(500)
       })
 

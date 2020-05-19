@@ -1,7 +1,7 @@
 module.exports = {
-  errorParser: err => ({
+  errorParser: (err) => ({
     error: err.name,
     stack: err.stack.split('\n'),
-    message: err.message || err.text
-  })
+    message: err.message || err.text,
+  }),
 }
