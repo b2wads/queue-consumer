@@ -1,6 +1,6 @@
 {
   "name": "queue-consumer",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Framework for creating consumers for message-broker systems",
   "main": "index.js",
   "dependencies": {
@@ -44,11 +44,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "github.com:b2wads/nodejs-boilerplate"
+    "url": "github.com:b2wads/queue-consumer"
   },
   "keywords": [
+    "amqp",
+    "consumer",
+    "node",
     "nodejs",
-    "boilerplate",
+    "queue",
+    "rabbit",
+    "rabbitmq",
     "worker"
   ],
   "author": "B2WADS",
