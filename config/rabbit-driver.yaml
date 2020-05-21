@@ -6,15 +6,15 @@ defaults:
   requeueOnFailure: true
 
 test:
-  keepAlive: env:TEST_RABBIT_DRIVER_KEEP_ALIVE
-  maxConnectionRetries: env:TEST_RABBIT_DRIVER_MAX_RETRIES
-  retryDelay: env:TEST_RABBIT_DRIVER_RETRY_DELAY
-  extraPrefetchPercentage: env:TEST_RABBIT_DRIVER_PREFETCH_FACTOR
-  requeueOnFailure: env:TEST_RABBIT_DRIVER_REQUEUE_ON_FAILURE
+  keepAlive: env:TEST_QUEUE_CONSUMER_RABBIT_KEEP_ALIVE
+  maxConnectionRetries: env:TEST_QUEUE_CONSUMER_RABBIT_MAX_RETRIES
+  retryDelay: env:TEST_QUEUE_CONSUMER_RABBIT_RETRY_DELAY
+  extraPrefetchPercentage: env:TEST_QUEUE_CONSUMER_RABBIT_PREFETCH_FACTOR
+  requeueOnFailure: env:TEST_QUEUE_CONSUMER_RABBIT_REQUEUE_ON_FAILURE
 
 production:
-  keepAlive: env:RABBIT_DRIVER_KEEP_ALIVE
-  maxConnectionRetries: env:RABBIT_DRIVER_MAX_RETRIES
-  retryDelay: env:RABBIT_DRIVER_RETRY_DELAY
-  extraPrefetchPercentage: env:RABBIT_DRIVER_PREFETCH_FACTOR
-  requeueOnFailure: env:RABBIT_DRIVER_REQUEUE_ON_FAILURE
+  keepAlive: env:QUEUE_CONSUMER_RABBIT_KEEP_ALIVE
+  maxConnectionRetries: env:QUEUE_CONSUMER_RABBIT_MAX_RETRIES
+  retryDelay: env:QUEUE_CONSUMER_RABBIT_RETRY_DELAY
+  extraPrefetchPercentage: env:QUEUE_CONSUMER_RABBIT_PREFETCH_FACTOR
+  requeueOnFailure: env:QUEUE_CONSUMER_RABBIT_REQUEUE_ON_FAILURE
