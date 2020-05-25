@@ -1,0 +1,20 @@
+defaults:
+  keepAlive: true
+  maxConnectionRetries: 3
+  retryDelay: 1000
+  extraPrefetchPercentage: 1.0
+  requeueOnFailure: true
+
+test:
+  keepAlive: env:TEST_QUEUE_CONSUMER_RABBIT_KEEP_ALIVE
+  maxConnectionRetries: env:TEST_QUEUE_CONSUMER_RABBIT_MAX_RETRIES
+  retryDelay: env:TEST_QUEUE_CONSUMER_RABBIT_RETRY_DELAY
+  extraPrefetchPercentage: env:TEST_QUEUE_CONSUMER_RABBIT_PREFETCH_FACTOR
+  requeueOnFailure: env:TEST_QUEUE_CONSUMER_RABBIT_REQUEUE_ON_FAILURE
+
+production:
+  keepAlive: env:QUEUE_CONSUMER_RABBIT_KEEP_ALIVE
+  maxConnectionRetries: env:QUEUE_CONSUMER_RABBIT_MAX_RETRIES
+  retryDelay: env:QUEUE_CONSUMER_RABBIT_RETRY_DELAY
+  extraPrefetchPercentage: env:QUEUE_CONSUMER_RABBIT_PREFETCH_FACTOR
+  requeueOnFailure: env:QUEUE_CONSUMER_RABBIT_REQUEUE_ON_FAILURE

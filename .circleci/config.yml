@@ -63,7 +63,7 @@ jobs:
           password: <<parameters.docker-auth-password>>
       #- image: mongo:3.6
       #- image: elasticsearch:5
-      #- image: rabbitmq:3.6-alpine
+      - image: rabbitmq:3.7-alpine
       #- image: redis:5
     steps:
       - install-git
@@ -107,7 +107,7 @@ jobs:
           <<: *build-template
           step-name: Pushing to registry
           tag: << parameters.image-tag >>
-  
+
   notify-build-status:
     description: Envia uma mensagem na página do PR com informações do build
     parameters:
@@ -159,8 +159,8 @@ workflows:
           context: docker-registry-auth
           image: node:12.14.0-alpine
           name: node-12
-      
-      # Remova os comentário abaixo se quiser realizar build 
+
+      # Remova os comentário abaixo se quiser realizar build
       # de uma imagem staging do repositório
 
       # - build-image: &build-template
@@ -184,7 +184,7 @@ workflows:
       #     requires:
       #       - build-staging
 
-      # Remova os comentário abaixo se quiser realizar build 
+      # Remova os comentário abaixo se quiser realizar build
       # de de imagem latest e tag quando mergear para master
 
       # - build-image:
