@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Framework for creating consumers for message-broker systems",
   "main": "index.js",
+  "files": [
+    "/src",
+    "/config"
+  ],
   "dependencies": {
     "@b2wads/logger": "1.0.3",
     "env-o-loader": "^1.0.7"
