@@ -32,7 +32,7 @@ class RabbitDriver {
 
         this._connection = await amqplib.connect(this.config.uri)
         this._channel = await this._connection.createChannel({ noAck: false })
-        await this._channel.prefetch(Math.floor(this.batchSize * (1 + this.config.extraPrefetchPercentage)))
+        await this._channel.prefetch(Math.floor(this.config.batchSize * (1 + this.config.extraPrefetchPercentage)))
 
         await this._channel.checkQueue(this.config.queue)
 
