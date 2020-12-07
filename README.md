@@ -5,6 +5,8 @@
 
 Minimalist Node.js framework for creating consumers for work queues.
 
+For detailed usage information, check the [API Reference](docs/api-reference.md).
+
 #### Table of Contents
 - [Usage Overview](#usage-overview)
 - [Components](#components)

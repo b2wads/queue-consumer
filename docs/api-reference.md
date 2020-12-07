@@ -5,16 +5,13 @@
   - [constructor](#consumerconstructoroptions)
   - [start](#consumerstart)
   - [stop](#consumerstop)
-
 - [Driver](#driver)
   - [connect](#driverconnectcallback)
   - [disconnect](#driverdisconnect)
   - [notifyBatchSuccess](#drivernotifybatchsuccessmessageBatch)
   - [notifyBatchFailure](#drivernotifybatchfailuremessageBatch)
-
 - [RabbitDriver](#rabbitdriver)
   - [constructor](#rabbitdriverconstructoroptions)
-
 - [MessageStatus](#messagestatus)
 
 
