@@ -1,17 +1,19 @@
 # Queue Consumer
+
+#### Table of Contents
 - [Consumer](#consumer)
-  - [constructor](#consumer\#constructor\(options\))
-  - [start](#consumer\#start\(\))
-  - [stop](#consumer\#stop\(\))
+  - [constructor](#consumerconstructoroptions)
+  - [start](#consumerstart)
+  - [stop](#consumerstop)
 
 - [Driver](#driver)
-  - [connect](#driver\#connect\(callback\))
-  - [disconnect](#driver\#disconnect\(\))
-  - [notifyBatchSuccess](#driver\#notifybatchsuccess\(messageBatch\))
-  - [notifyBatchFailure](#driver\#notifybatchfailure\(messageBatch\))
+  - [connect](#driverconnectcallback)
+  - [disconnect](#driverdisconnect)
+  - [notifyBatchSuccess](#drivernotifybatchsuccessmessageBatch)
+  - [notifyBatchFailure](#drivernotifybatchfailuremessageBatch)
 
 - [RabbitDriver](#rabbitdriver)
-  - [constructor](#rabbitdriver\#constructor\(options\))
+  - [constructor](#rabbitdriverconstructoroptions)
 
 - [MessageStatus](#messagestatus)
 
