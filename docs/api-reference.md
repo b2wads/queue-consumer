@@ -9,105 +9,115 @@
   - [disconnect](#driver_disconnect)
   - [notifyBatchSuccess](#driver_notifybatchsuccess)
   - [notifyBatchFailure](#driver_notifybatchfailure)
-  - [RabbitDriver](#rabbitdriver)
-    - [constructor](#rabbitdriver_constructor)
+
+- [RabbitDriver](#rabbitdriver)
+  - [constructor](#rabbitdriver_constructor)
+
+- [MessageStatus](#messagestatus)
+
 
 ## Consumer
 
-### Consumer#constructor
+### Consumer#constructor(options)
 
-```JavaScript
-constructor({
-  asyncMessageAdapter,
-  asyncBatchOutput,
-  batchSize,
-  discardOnAdapterFailure,
-  driver,
-  errorHandler,
-  maxFlushDelay,
-  messageToObject
-})
-```
+Instantiates a new Consumer
 
-#### asyncMessageAdapter
+- returns: new Consumer instance
 
-- Type: asynchronous function
-- Default: identity function
 
-Asynchronous function that takes a message as argument and returns data to be output. By default this will be the identity function
+- options:
 
-#### asyncBatchOutput
+| option              | type            | description         | default     |
+| :------------------ | :-------------: | :-----------------: | --------------: |
+| asyncBatchOutput    |  async function | function which takes an array of all returns from `asyncMessageAdapter` and outputs it somewhere | no default, required |
+| asyncMessageAdapter |  async function | function which takes a message and returns data to be output | identity function |
+| batchSize           |  number         | size of the batch   | 10 |
+| discardOnAdapterFailure |  boolean    | whether or not messages should be discarded if `asyncMessageAdapter` throws an exception | true |
+| driver              | [Driver](#driver) | [Driver](#driver) to use for communicating with the queue server | no default, required |
+| errorHandler        |  function       | function to handle errors in `asyncMessageAdapter` (only if `discardOnAdapterFailure=false`) and `asyncBatchOutput` | logs errors to standard error |
+| maxFlushDelay       |  number         | Maximum time (in milliseconds) before the consumer will start processing an incomplete batch | 10000 |
+| messageToObject     |  function       | Function to convert a raw message from the driver to a JavaScript object | converts contents from an amqplib message |
 
-- Type: asynchronous function
-- Default: No default, this argument is required
-
-Asynchronous function which takes an array containing all returns of `asyncMessageAdapter` and outputs it somewhere. This is required and has no default
-
-#### batchSize
-
-- Type: number
-- Default: 10
-
-Size of the batch. Default is 10.
-
-#### discardOnAdapterFailure
-
-- Type: boolean
-- Default: true
-
-Tells whether or not messages should be discarded if `asyncMessageAdapter` throws an exception. Default is true
-
-#### driver
-
-- Type: [Driver](#driver)
-- Default: No default, this argument is required
-
-[Driver](#driver) to use for connecting with the queue server.
-
-#### errorHandler
-
-- Type: function
-- Default: logs errors to standard error output
-
-Function to handle errors in `asyncMessageAdapter` and `asyncBatchOutput`.
-
-If `discardOnAdapterFailure=true` this won't be used for `asyncMessageAdapter`.
-
-#### maxFlushDelay
-
-- Type: number
-- Default: 10000
-
-Maximum idle time allowed (in milliseconds) before the consumer will start processing an incomplete batch.
-
-#### messageToObject
-
-- Type: function
-- Default: parses the contents from an amqplib message as a JavaScript object.
-
-Function to convert a raw message from the driver to a JavaScript object.
-
-### Consumer#start
+### Consumer#start()
 
 Connects the consumer to the queue server and starts processing messages.
 
-`Consumer#start()`
+- returns: promise which resolves after the internal driver successfully connects to the queue server
 
-Returns a promise which resolves after the internal driver successfully connects to the queue server
-
-### Consumer#stop
+### Consumer#stop()
 
 Disconnects the consumer from the queue server and stops processing messages. This termination is ungraceful, meaning unexpected errors can occur if messages are being processed when this function is called.
 
-`Consumer#stop()`
-
-Returns a promise which resolves after the internal driver successfully disconnects from the queue server
+- returns: promise which resolves after the internal driver successfully disconnects from the queue server
 
 ## Driver
 
 A driver is an interface for connecting a consumer to a queue server.
 
-### Driver#connect
+### Driver#connect(callback)
 
-TODO
+Connects the driver to the queue server
+
+- returns: promise which resolves after a connection is successfully established
+
+- callback: function to be called for each message fetched from the queue. The callback takes the retrieved message as its only argument
+
+### Driver#disconnect()
+
+Disconnects the driver from the queue server
+
+- returns: promise which resolves after the connection has been closed
+
+### Driver#notifyBatchSuccess(messageBatch)
+
+Notifies queue server that a batch has finished processing.
+
+- returns: promise which resolves after the server has received the status of all messages
+
+- messageBatch: array of objects, where each object contains the following attributes:
+  - status: processing status of the message. One of [MessageStatus](#message-status)
+  - rawMsg: message as received from the driver, without any alteration
+
+### Driver#notifyBatchFailure(messageBatch)
+
+Notifies queue server that a batch has failed.
+
+- returns: promise which resolves after the server has received the status of all messages
+
+- messageBatch: array of objects, where each object contains the following attributes:
+  - status: processing status of the message. One of [MessageStatus](#message-status)
+  - rawMsg: message as received from the driver, without any alteration
+
+## RabbitDriver
+
+An implementation of [Driver](#driver), designed for communication with a RabbitMQ server.
+
+### RabbitDriver#constructor(options)
+
+
+Instantiates a new RabbitDriver
+
+- returns: new RabbitDriver instance
+
+
+- options:
+
+| option              | type            | description         | default     |
+| :------------------ | :-------------: | :-----------------: | --------------: |
+| batchSize           |  number         | size of the batch   | no default, required |
+| extraPrefetchPercentage | number      | factor of extra messages to keep in buffer while a batch is being processed. eg.: a value of 0.5 will cause the driver to fetch 50% of the next batch while the current batch is being processed | 1.0 |
+| keepAlive    | boolean                | whether the driver should try to connect again in case of a connection failure | true |
+| maxConnectionRetries | number         | maximum number of reconnection attempts the driver is allowed to make | 3 |
+| queue               | string          | RabbitMQ queue from which to fetch messages | no default, required |
+| requeueOnFailure     | boolean        | whether the driver should requeue messages in case of a failure | true |
+| retryDelay | number | time to wait idly (in milliseconds) before attempting a reconnection | 1000 |
+| uri                 | string          | uri identifying the RabbitMQ server | no default, required |
+
+## MessageStatus
+
+Enumerator of all possible message status. Contains the following values:
+
+- SUCCESS: message was successfully processed
+- FAILED: message processing failed
+- DISCARDED: message was not processed because it was intentionally discarded
 
